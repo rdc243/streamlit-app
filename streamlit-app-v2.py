@@ -316,7 +316,7 @@ if "last_auto_stop_ts" not in st.session_state:
 # ============================================================
 # HEADER
 # ============================================================
-st.title("Dashboard ESP32 (MQTT + ThingSpeak)")
+st.title("Dashboard ESP32")
 st.caption("Refresh UI 2s • ThingSpeak cache 20s • Seuils sécurité + jauges")
 
 
