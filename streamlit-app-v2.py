@@ -498,45 +498,8 @@ with right:
 
 st.divider()
 
-
 # ============================================================
-# 5) THINGSPEAK (Node-RED)
-# ============================================================
-st.subheader("ThingSpeak (Node-RED → field1..field4)")
-
-try:
-    ts_df = fetch_thingspeak_df(TS_CHANNEL_ID, TS_READ_KEY, results=180)
-
-    if ts_df.empty:
-        st.info("Aucune donnée ThingSpeak trouvée.")
-    else:
-        last = ts_df.dropna(how="all", subset=["temp", "humidity", "flame", "ldr"]).tail(1).iloc[0]
-        lvl_ts, reason_ts = compute_levels(last["temp"], last["flame"])
-        show_level_box(lvl_ts, f"Dernier sample ThingSpeak: {reason_ts}")
-
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Temp (TS)", f"{last['temp']:.1f} °C")
-        c2.metric("Hum (TS)", f"{last['humidity']:.0f} %")
-        c3.metric("Flame (TS)", f"{int(last['flame'])}")
-        c4.metric("LDR (TS)", "—" if pd.isna(last["ldr"]) else f"{int(last['ldr'])}")
-
-        st.write("Status (ThingSpeak):", "—" if pd.isna(last.get("status")) else str(last.get("status")))
-        st.write("Date:", pd.to_datetime(last["created_at"]).strftime("%Y-%m-%d %H:%M:%S"))
-
-        st.markdown("### Courbes")
-        st.line_chart(ts_df.set_index("created_at")[["temp", "humidity"]])
-        st.line_chart(ts_df.set_index("created_at")[["flame", "ldr"]])
-
-        with st.expander("Table (dernières lignes)"):
-            st.dataframe(ts_df.tail(25), use_container_width=True)
-
-except Exception as e:
-    st.error(f"Erreur lecture ThingSpeak: {e}")
-    st.caption("Si channel privé → read_api_key requis. Si public → read key peut rester vide.")
-
-
-# ============================================================
-# 6) DEBUG (optionnel)
+# 5) DEBUG (optionnel)
 # ============================================================
 with st.expander("Debug (MQTT)"):
     st.write("Last RX age:", age(now_ts, snap.ts_last_any))
